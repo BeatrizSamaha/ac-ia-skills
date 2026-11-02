@@ -23,7 +23,8 @@ class EntradaIn(BaseModel):
 class ItemOut(BaseModel):
     lote_id: int
     codigo_lote: str
-    quantidade: int
+    quantidade: int  # unidades movidas (sempre positiva)
+    variacao: int  # efeito no lote: + aumentou, - diminuiu
 
 
 class MovimentacaoOut(BaseModel):
@@ -48,7 +49,8 @@ def saida(m: Movimentacao) -> MovimentacaoOut:
         funcionario_id=m.funcionario_id, funcionario=m.funcionario.nome,
         data_hora=m.data_hora, setor=m.setor, paciente=m.paciente, motivo=m.motivo,
         retirada_origem_id=m.retirada_origem_id,
-        itens=[ItemOut(lote_id=i.lote_id, codigo_lote=i.lote.codigo, quantidade=abs(i.quantidade))
+        itens=[ItemOut(lote_id=i.lote_id, codigo_lote=i.lote.codigo, quantidade=abs(i.quantidade),
+                       variacao=i.quantidade)
                for i in m.itens],
     )
 
@@ -116,3 +118,15 @@ def ajuste(dados: AjusteIn, f: Funcionario = Depends(exige(Perfil.FARMACEUTICO))
     return saida(servico.registrar_ajuste(
         s, funcionario=f, agora=momento, lote_id=dados.lote_id,
         nova_quantidade=dados.nova_quantidade, motivo=dados.motivo))
+
+
+class RetiradaResumo(MovimentacaoOut):
+    quantidade: int
+    devolvivel: int
+
+
+@router.get("/retiradas", response_model=list[RetiradaResumo])
+def listar_retiradas(f: Funcionario = Depends(exige(Perfil.FARMACEUTICO, Perfil.ENFERMEIRO)),
+                     s: Session = Depends(get_session)):
+    return [RetiradaResumo(**saida(m).model_dump(), quantidade=q, devolvivel=d)
+            for m, q, d in servico.retiradas_visiveis(s, f)]

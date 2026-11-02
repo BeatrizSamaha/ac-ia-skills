@@ -3,6 +3,7 @@ from datetime import datetime
 import pytest
 from fastapi.testclient import TestClient
 
+from app.acesso import servico as acesso_servico
 from app.acesso.servico import criar_funcionario
 from app.main import create_app
 from app.models import Perfil
@@ -10,6 +11,8 @@ from app.models import Perfil
 AGORA = datetime(2026, 11, 2, 10, 0)
 
 SENHA = "Senha-forte-123"
+
+acesso_servico.BCRYPT_ROUNDS = 4  # acelera os testes; produção usa 12
 
 
 class Relogio:

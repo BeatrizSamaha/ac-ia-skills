@@ -11,10 +11,11 @@ from app.models import Funcionario, Perfil
 
 DURACAO_TOKEN = timedelta(hours=8)
 TAMANHO_MINIMO_SENHA = 8
+BCRYPT_ROUNDS = 12  # os testes reduzem para acelerar
 
 
 def _hash(senha: str) -> str:
-    return bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode()
+    return bcrypt.hashpw(senha.encode(), bcrypt.gensalt(BCRYPT_ROUNDS)).decode()
 
 
 def _confere(senha: str, senha_hash: str) -> bool:

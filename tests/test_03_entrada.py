@@ -12,7 +12,7 @@ def test_entrada_cria_lote_e_soma_ao_estoque(client, admin, farmaceutico):
     mid = cria_medicamento(client, admin)
     mov = entrada(client, farmaceutico, mid, "L1", 50)
     assert mov["tipo"] == "entrada" and mov["funcionario"] == "Fábio Farmacêutico"
-    assert mov["itens"] == [{"lote_id": mov["itens"][0]["lote_id"], "codigo_lote": "L1", "quantidade": 50}]
+    assert mov["itens"] == [{"lote_id": mov["itens"][0]["lote_id"], "codigo_lote": "L1", "quantidade": 50, "variacao": 50}]
     entrada(client, farmaceutico, mid, "L2", 30)
     assert estoque(client, farmaceutico, mid)["estoque_disponivel"] == 80
     assert lotes(client, farmaceutico, mid) == {"L1": 50, "L2": 30}

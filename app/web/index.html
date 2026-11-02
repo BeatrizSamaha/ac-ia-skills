@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Controle de Medicamentos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Controle de Medicamentos</h1>
+    <div id="usuario" hidden>
+      <span id="quem"></span>
+      <button id="sair" class="secundario">Sair</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="tela-login" class="cartao estreito">
+      <h2>Entrar</h2>
+      <form id="form-login">
+        <label>E-mail <input name="email" type="email" required autocomplete="username"></label>
+        <label>Senha <input name="senha" type="password" required autocomplete="current-password"></label>
+        <button type="submit">Entrar</button>
+      </form>
+      <p class="dica">Demo: admin@ · farmaceutico@ · enfermeiro@hospital.demo — senha <code>demo12345</code></p>
+    </section>
+
+    <section id="tela-app" hidden>
+      <nav id="abas"></nav>
+      <div id="mensagem" role="status" hidden></div>
+
+      <div class="aba" data-aba="estoque" data-perfis="administrador farmaceutico enfermeiro">
+        <h2>Estoque</h2>
+        <table><thead><tr><th>Medicamento</th><th>Classe</th><th>Disponível</th><th>Mínimo</th><th>Lotes (validade · qtd)</th></tr></thead>
+          <tbody id="tabela-estoque"></tbody></table>
+      </div>
+
+      <div class="aba" data-aba="retirada" data-perfis="farmaceutico enfermeiro">
+        <h2>Retirada</h2>
+        <form id="form-retirada" class="cartao">
+          <label>Medicamento <select name="medicamento_id" class="sel-medicamento" required></select></label>
+          <label>Quantidade <input name="quantidade" type="number" min="1" required></label>
+          <label>Setor <input name="setor" required placeholder="UTI, Pronto-Socorro..."></label>
+          <label>Paciente <input name="paciente" placeholder="Obrigatório para controlados"></label>
+          <button type="submit">Retirar (FEFO)</button>
+        </form>
+      </div>
+
+      <div class="aba" data-aba="devolucao" data-perfis="farmaceutico enfermeiro">
+        <h2>Devolução</h2>
+        <table><thead><tr><th>#</th><th>Data</th><th>Medicamento</th><th>Setor</th><th>Por</th><th>Retirado</th><th>Pode devolver</th><th></th></tr></thead>
+          <tbody id="tabela-retiradas"></tbody></table>
+      </div>
+
+      <div class="aba" data-aba="entrada" data-perfis="farmaceutico">
+        <h2>Entrada de lote</h2>
+        <form id="form-entrada" class="cartao">
+          <label>Medicamento <select name="medicamento_id" class="sel-medicamento" required></select></label>
+          <label>Código do lote <input name="codigo_lote" required></label>
+          <label>Validade <input name="validade" type="date" required></label>
+          <label>Quantidade <input name="quantidade" type="number" min="1" required></label>
+          <button type="submit">Registrar entrada</button>
+        </form>
+        <h2>Descarte / ajuste</h2>
+        <form id="form-descarte" class="cartao">
+          <label>Lote <select name="lote_id" id="sel-lote" required></select></label>
+          <label>Operação
+            <select name="operacao"><option value="descarte">Descartar quantidade</option><option value="ajuste">Ajustar para nova quantidade</option></select></label>
+          <label>Quantidade <input name="quantidade" type="number" min="0" required></label>
+          <label>Motivo <input name="motivo" required></label>
+          <button type="submit">Registrar</button>
+        </form>
+      </div>
+
+      <div class="aba" data-aba="alertas" data-perfis="farmaceutico">
+        <h2>Alertas de reposição</h2>
+        <table><thead><tr><th>Medicamento</th><th>Disponível</th><th>Mínimo</th><th>Faltam</th></tr></thead>
+          <tbody id="tabela-reposicao"></tbody></table>
+        <h2>Alertas de validade (até 30 dias)</h2>
+        <table><thead><tr><th>Medicamento</th><th>Lote</th><th>Validade</th><th>Qtd</th><th>Situação</th></tr></thead>
+          <tbody id="tabela-validade"></tbody></table>
+      </div>
+
+      <div class="aba" data-aba="auditoria" data-perfis="farmaceutico">
+        <h2>Trilha de auditoria</h2>
+        <form id="form-auditoria" class="cartao linha">
+          <label>Tipo <select name="tipo"><option value="">Todos</option><option value="entrada">Entrada</option><option value="retirada">Retirada</option><option value="devolucao">Devolução</option><option value="descarte">Descarte</option><option value="ajuste">Ajuste</option></select></label>
+          <label>De <input name="inicio" type="date"></label>
+          <label>Até <input name="fim" type="date"></label>
+          <button type="submit">Filtrar</button>
+        </form>
+        <table><thead><tr><th>#</th><th>Data/hora</th><th>Tipo</th><th>Medicamento</th><th>Lotes</th><th>Funcionário</th><th>Setor / paciente / motivo</th></tr></thead>
+          <tbody id="tabela-auditoria"></tbody></table>
+      </div>
+
+      <div class="aba" data-aba="cadastros" data-perfis="administrador">
+        <h2>Funcionários</h2>
+        <form id="form-funcionario" class="cartao">
+          <label>Nome <input name="nome" required></label>
+          <label>E-mail <input name="email" type="email" required></label>
+          <label>Senha inicial <input name="senha" type="password" minlength="8" required></label>
+          <label>Perfil <select name="perfil"><option value="enfermeiro">Enfermeiro</option><option value="farmaceutico">Farmacêutico</option><option value="administrador">Administrador</option></select></label>
+          <button type="submit">Cadastrar funcionário</button>
+        </form>
+        <table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th></th></tr></thead>
+          <tbody id="tabela-funcionarios"></tbody></table>
+        <h2>Medicamentos</h2>
+        <form id="form-medicamento" class="cartao">
+          <label>Nome <input name="nome" required></label>
+          <label>Apresentação <input name="apresentacao" required></label>
+          <label>Classe <select name="classe"><option value="comum">Comum</option><option value="controlado">Controlado</option></select></label>
+          <label>Estoque mínimo <input name="estoque_minimo" type="number" min="0" value="0" required></label>
+          <button type="submit">Cadastrar medicamento</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

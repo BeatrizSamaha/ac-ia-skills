@@ -1,0 +1,32 @@
+:root { --azul: #0b5cad; --azul-claro: #e8f1fb; --vermelho: #b42318; --verde: #067647; --cinza: #667085; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1d2939; background: #f7f9fc; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: var(--azul); color: #fff; }
+header h1 { font-size: 1.2rem; margin: 0; }
+#usuario { display: flex; gap: 12px; align-items: center; }
+main { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+.cartao { background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; padding: 16px; margin-bottom: 16px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); align-items: end; }
+.cartao.estreito { max-width: 380px; margin: 60px auto; grid-template-columns: 1fr; }
+.cartao.estreito form { display: grid; gap: 10px; }
+label { display: grid; gap: 4px; font-size: .85rem; color: var(--cinza); }
+input, select { padding: 8px; border: 1px solid #d0d5dd; border-radius: 6px; font: inherit; color: #1d2939; }
+button { padding: 9px 14px; border: 0; border-radius: 6px; background: var(--azul); color: #fff; font: inherit; cursor: pointer; }
+button.secundario { background: transparent; border: 1px solid #fff; }
+button.pequeno { padding: 4px 10px; font-size: .85rem; }
+nav { display: flex; gap: 4px; border-bottom: 2px solid #e4e7ec; margin-bottom: 16px; flex-wrap: wrap; }
+nav button { background: transparent; color: var(--cinza); border-radius: 6px 6px 0 0; }
+nav button.ativa { background: var(--azul-claro); color: var(--azul); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; overflow: hidden; margin-bottom: 24px; font-size: .9rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #f2f4f7; vertical-align: top; }
+th { background: #f9fafb; color: var(--cinza); font-weight: 600; }
+h2 { font-size: 1.05rem; }
+#mensagem { padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; }
+#mensagem.ok { background: #ecfdf3; color: var(--verde); }
+#mensagem.erro { background: #fef3f2; color: var(--vermelho); }
+.etiqueta { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: .78rem; background: #f2f4f7; }
+.etiqueta.controlado, .etiqueta.vencido { background: #fef3f2; color: var(--vermelho); }
+.abaixo { color: var(--vermelho); font-weight: 600; }
+.dica { font-size: .8rem; color: var(--cinza); }
+[hidden] { display: none !important; }
+input, select { width: 100%; min-width: 0; }
+.cartao label { align-self: end; }

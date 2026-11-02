@@ -178,3 +178,21 @@ def registrar_ajuste(
     mov = Movimentacao(tipo=TipoMovimentacao.AJUSTE, medicamento_id=lote.medicamento_id,
                        funcionario=funcionario, data_hora=agora, motivo=motivo)
     return _registra(s, mov, [(lote, delta)])
+
+
+def retiradas_visiveis(s: Session, funcionario: Funcionario) -> list[tuple[Movimentacao, int, int]]:
+    """Retiradas que o funcionário pode devolver, com (retirada, quantidade, ainda devolvível).
+    Enfermeiro vê só as próprias; Farmacêutico vê todas."""
+    q = select(Movimentacao).where(Movimentacao.tipo == TipoMovimentacao.RETIRADA)
+    if funcionario.perfil == Perfil.ENFERMEIRO:
+        q = q.where(Movimentacao.funcionario_id == funcionario.id)
+    resultado = []
+    for ret in s.scalars(q.order_by(Movimentacao.data_hora.desc(), Movimentacao.id.desc())):
+        retirado = -sum(i.quantidade for i in ret.itens)
+        devolvido = sum(
+            i.quantidade
+            for dev in s.scalars(select(Movimentacao).where(Movimentacao.retirada_origem_id == ret.id))
+            for i in dev.itens
+        )
+        resultado.append((ret, retirado, retirado - devolvido))
+    return resultado

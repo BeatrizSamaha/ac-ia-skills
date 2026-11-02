@@ -36,9 +36,10 @@ def test_descarte_sem_motivo_ou_acima_do_lote_e_recusado(client, admin, farmaceu
 def test_ajuste_define_nova_quantidade_e_registra_diferenca(client, admin, farmaceutico):
     mid, lid = _lote(client, admin, farmaceutico)
     r = ajuste(client, farmaceutico, lid, 8)
-    assert r.status_code == 201 and r.json()["itens"][0]["quantidade"] == 2
+    assert r.status_code == 201 and r.json()["itens"][0]["variacao"] == -2
     assert lotes(client, farmaceutico, mid) == {"L1": 8}
-    assert ajuste(client, farmaceutico, lid, 12).status_code == 201
+    r = ajuste(client, farmaceutico, lid, 12)
+    assert r.status_code == 201 and r.json()["itens"][0]["variacao"] == 4
     assert lotes(client, farmaceutico, mid) == {"L1": 12}
 
 
