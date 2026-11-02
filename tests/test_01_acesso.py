@@ -87,3 +87,22 @@ def test_token_expirado_responde_401(client, enfermeiro, relogio):
 
     relogio.agora = relogio.agora + timedelta(hours=9)
     assert client.get("/api/eu", headers=enfermeiro).status_code == 401
+
+
+def test_admin_nao_pode_desativar_a_si_mesmo(client, admin):
+    eu_id = client.get("/api/eu", headers=admin).json()["id"]
+    r = client.post(f"/api/funcionarios/{eu_id}/desativar", headers=admin)
+    assert r.status_code == 422
+
+
+def test_erro_de_validacao_vem_em_portugues(client, admin):
+    r = client.post("/api/funcionarios", headers=admin, json={"nome": "X"})
+    assert r.status_code == 422
+    assert r.json()["detail"].startswith("Dados inválidos")
+
+
+def test_create_app_exige_segredo_jwt():  # noqa: D103
+    import pytest
+    from app.main import create_app
+    with pytest.raises(ValueError):
+        create_app(database_url="sqlite://", jwt_secret="")

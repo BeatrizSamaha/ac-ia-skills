@@ -49,13 +49,13 @@ aoEnviar("#form-login", async (d) => {
 $("#sair").onclick = sair;
 function sair() {
   token = null; eu = null; sessionStorage.removeItem("token");
-  $("#tela-app").hidden = true; $("#usuario").hidden = true; $("#tela-login").hidden = false;
+  $("#tela-app").hidden = true; $("#sessao").hidden = true; $("#tela-login").hidden = false;
 }
 
 async function iniciar() {
   eu = await api("/eu");
   $("#quem").textContent = `${eu.nome} · ${eu.perfil}`;
-  $("#tela-login").hidden = true; $("#tela-app").hidden = false; $("#usuario").hidden = false;
+  $("#tela-login").hidden = true; $("#tela-app").hidden = false; $("#sessao").hidden = false;
   const abas = [...document.querySelectorAll(".aba")].filter((a) => a.dataset.perfis.split(" ").includes(eu.perfil));
   $("#abas").innerHTML = "";
   for (const a of abas) {
@@ -137,7 +137,7 @@ aoEnviar("#form-entrada", async (d, f) => {
   aviso(`Entrada #${m.id} registrada (lote ${m.itens[0].codigo_lote}).`); f.reset(); await carregarMedicamentos();
 });
 aoEnviar("#form-descarte", async (d, f) => {
-  const ajuste = d.operacao === "ajuste";
+  const ajuste = d.tipo === "ajuste";
   const corpo = ajuste ? { lote_id: +d.lote_id, nova_quantidade: +d.quantidade, motivo: d.motivo }
                        : { lote_id: +d.lote_id, quantidade: +d.quantidade, motivo: d.motivo };
   const m = await api(`/movimentacoes/${ajuste ? "ajustes" : "descartes"}`, { method: "POST", body: corpo });

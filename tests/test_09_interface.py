@@ -7,7 +7,7 @@ def test_pagina_inicial_e_servida(client):
     assert r.status_code == 200 and "Controle de Medicamentos" in r.text
 
 
-def test_enfermeiro_ve_so_as_proprias_retiradas_com_saldo_devolvivel(
+def test_enfermeiro_ve_so_as_proprias_retiradas_e_quanto_pode_devolver(
         client, admin, farmaceutico, enfermeiro, enfermeiro2):
     mid = cria_medicamento(client, admin)
     entrada(client, farmaceutico, mid, "L1", 50)

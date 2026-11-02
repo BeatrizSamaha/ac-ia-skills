@@ -9,7 +9,7 @@
 <body>
   <header>
     <h1>Controle de Medicamentos</h1>
-    <div id="usuario" hidden>
+    <div id="sessao" hidden>
       <span id="quem"></span>
       <button id="sair" class="secundario">Sair</button>
     </div>
@@ -65,8 +65,8 @@
         <h2>Descarte / ajuste</h2>
         <form id="form-descarte" class="cartao">
           <label>Lote <select name="lote_id" id="sel-lote" required></select></label>
-          <label>Operação
-            <select name="operacao"><option value="descarte">Descartar quantidade</option><option value="ajuste">Ajustar para nova quantidade</option></select></label>
+          <label>Tipo de movimentação
+            <select name="tipo"><option value="descarte">Descartar quantidade</option><option value="ajuste">Ajustar para nova quantidade</option></select></label>
           <label>Quantidade <input name="quantidade" type="number" min="0" required></label>
           <label>Motivo <input name="motivo" required></label>
           <button type="submit">Registrar</button>

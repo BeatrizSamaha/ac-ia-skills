@@ -1,4 +1,5 @@
 """Infraestrutura de banco: engine, sessão e base declarativa."""
+import importlib
 from collections.abc import Iterator
 
 from fastapi import Request
@@ -16,7 +17,7 @@ def criar_sessionmaker(url: str) -> sessionmaker[Session]:
     if url in ("sqlite://", "sqlite:///:memory:"):
         kwargs["poolclass"] = StaticPool
     engine = create_engine(url, **kwargs)
-    from app import models  # noqa: F401  (registra as tabelas)
+    importlib.import_module("app.models")  # registra as tabelas no Base
 
     Base.metadata.create_all(engine)
     return sessionmaker(bind=engine, expire_on_commit=False)

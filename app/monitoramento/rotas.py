@@ -7,7 +7,7 @@ from app.acesso.dependencias import exige
 from app.db import get_session
 from app.models import Funcionario, Perfil, TipoMovimentacao
 from app.monitoramento import servico
-from app.movimentacoes.rotas import MovimentacaoOut, saida
+from app.movimentacoes.esquemas import MovimentacaoOut, para_resposta
 from app.relogio import hoje
 
 router = APIRouter(tags=["Monitoramento"])
@@ -34,4 +34,4 @@ def auditoria(
 ):
     movs = servico.trilha_de_auditoria(s, medicamento_id=medicamento_id, funcionario_id=funcionario_id,
                                        tipo=tipo, inicio=inicio, fim=fim)
-    return [saida(m) for m in movs]
+    return [para_resposta(m) for m in movs]

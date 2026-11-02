@@ -1,0 +1,28 @@
+
+Name                            Stmts   Miss  Cover   Missing
+-------------------------------------------------------------
+app/__init__.py                     0      0   100%
+app/__main__.py                    22     22     0%   2-32
+app/acesso/__init__.py              0      0   100%
+app/acesso/dependencias.py         19      0   100%
+app/acesso/rotas.py                42      0   100%
+app/acesso/servico.py              56      0   100%
+app/db.py                          20      0   100%
+app/erros.py                       15      0   100%
+app/estoque/__init__.py             0      0   100%
+app/estoque/rotas.py               47      0   100%
+app/estoque/servico.py             41      1    98%   21
+app/main.py                        33      0   100%
+app/models.py                      69      0   100%
+app/monitoramento/__init__.py       0      0   100%
+app/monitoramento/rotas.py         21      0   100%
+app/monitoramento/servico.py       47      0   100%
+app/movimentacoes/__init__.py       0      0   100%
+app/movimentacoes/esquemas.py      23      0   100%
+app/movimentacoes/rotas.py         53      0   100%
+app/movimentacoes/servico.py      132      4    97%   28-30, 62
+app/relogio.py                      6      0   100%
+app/seed.py                        27      0   100%
+-------------------------------------------------------------
+TOTAL                             673     27    96%
+71 passed in 6.56s

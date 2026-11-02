@@ -42,7 +42,7 @@ class MedicamentoOut(BaseModel):
     lotes: list[LoteOut]
 
 
-def _saida(s: Session, m: Medicamento, dia: date) -> MedicamentoOut:
+def _para_resposta(s: Session, m: Medicamento, dia: date) -> MedicamentoOut:
     lotes = servico.lotes_do_medicamento(s, m.id)
     return MedicamentoOut(
         id=m.id,
@@ -62,13 +62,13 @@ def _saida(s: Session, m: Medicamento, dia: date) -> MedicamentoOut:
 @router.get("/medicamentos", response_model=list[MedicamentoOut])
 def listar(_: Funcionario = Depends(funcionario_logado), s: Session = Depends(get_session),
            dia: date = Depends(hoje)):
-    return [_saida(s, m, dia) for m in servico.listar_medicamentos(s)]
+    return [_para_resposta(s, m, dia) for m in servico.listar_medicamentos(s)]
 
 
 @router.get("/medicamentos/{medicamento_id}", response_model=MedicamentoOut)
 def obter(medicamento_id: int, _: Funcionario = Depends(funcionario_logado),
           s: Session = Depends(get_session), dia: date = Depends(hoje)):
-    return _saida(s, servico.obter_medicamento(s, medicamento_id), dia)
+    return _para_resposta(s, servico.obter_medicamento(s, medicamento_id), dia)
 
 
 @router.post("/medicamentos", response_model=MedicamentoOut, status_code=201)
@@ -76,11 +76,11 @@ def criar(dados: MedicamentoIn, _: Funcionario = Depends(exige(Perfil.ADMINISTRA
           s: Session = Depends(get_session), dia: date = Depends(hoje)):
     m = servico.criar_medicamento(s, nome=dados.nome, apresentacao=dados.apresentacao,
                                   classe=dados.classe, estoque_minimo=dados.estoque_minimo)
-    return _saida(s, m, dia)
+    return _para_resposta(s, m, dia)
 
 
 @router.patch("/medicamentos/{medicamento_id}", response_model=MedicamentoOut)
 def alterar(medicamento_id: int, dados: MedicamentoPatch,
             _: Funcionario = Depends(exige(Perfil.ADMINISTRADOR)),
             s: Session = Depends(get_session), dia: date = Depends(hoje)):
-    return _saida(s, servico.alterar_estoque_minimo(s, medicamento_id, dados.estoque_minimo), dia)
+    return _para_resposta(s, servico.alterar_estoque_minimo(s, medicamento_id, dados.estoque_minimo), dia)

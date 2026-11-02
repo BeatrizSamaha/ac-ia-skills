@@ -37,7 +37,7 @@ def alertas_de_reposicao(s: Session, hoje: date) -> list[AlertaReposicao]:
     for m in listar_medicamentos(s):
         disponivel = estoque_disponivel(s, m.id, hoje)
         if disponivel < m.estoque_minimo:
-            alertas.append(AlertaReposicao(m.id, f"{m.nome} {m.apresentacao}", disponivel,
+            alertas.append(AlertaReposicao(m.id, m.descricao, disponivel,
                                            m.estoque_minimo, m.estoque_minimo - disponivel))
     return alertas
 
@@ -50,7 +50,7 @@ def alertas_de_validade(s: Session, hoje: date) -> list[AlertaValidade]:
     )
     return [
         AlertaValidade(l.id, l.codigo, l.medicamento_id,
-                       f"{l.medicamento.nome} {l.medicamento.apresentacao}", l.validade,
+                       l.medicamento.descricao, l.validade,
                        l.quantidade, (l.validade - hoje).days, l.validade < hoje)
         for l in lotes
     ]

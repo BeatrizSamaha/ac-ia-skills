@@ -1,0 +1,31 @@
+flowchart TB
+  classDef container fill:#438dd5,stroke:#2e6295,color:#fff
+  classDef comp fill:#85bbf0,stroke:#5d82a8,color:#000
+  classDef db fill:#438dd5,stroke:#2e6295,color:#fff
+
+  web["<b>Aplicação Web</b><br/>[HTML + JS]"]:::container
+  subgraph API["API — Python 3 + FastAPI"]
+    direction TB
+    acesso["<b>Acesso</b><br/>[Componente]<br/>Login JWT, funcionários,<br/>autorização por perfil (exige)"]:::comp
+    estoque["<b>Estoque</b><br/>[Componente]<br/>Medicamentos, lotes,<br/>estoque disponível, FEFO"]:::comp
+    mov["<b>Movimentações</b><br/>[Componente]<br/>Entrada, retirada, devolução,<br/>descarte, ajuste (única escrita em lotes)"]:::comp
+    mon["<b>Monitoramento</b><br/>[Componente]<br/>Alertas de reposição e validade,<br/>trilha de auditoria (só leitura)"]:::comp
+    modelo["<b>Modelo compartilhado</b><br/>[SQLAlchemy ORM]<br/>Funcionario, Medicamento, Lote,<br/>Movimentacao, ItemMovimentacao"]:::comp
+  end
+  db[("<b>Banco de Dados</b><br/>[SQLite]")]:::db
+
+  web -->|"JSON/HTTPS + Bearer token"| acesso
+  web -->|JSON/HTTPS| estoque
+  web -->|JSON/HTTPS| mov
+  web -->|JSON/HTTPS| mon
+  estoque -->|"usa exige()"| acesso
+  mov -->|"usa exige()"| acesso
+  mon -->|"usa exige()"| acesso
+  mov -->|"lotes_validos_fefo()<br/>obter_medicamento()"| estoque
+  mon -->|"estoque_disponivel()"| estoque
+  mon -->|"esquemas.para_resposta()"| mov
+  acesso --> modelo
+  estoque --> modelo
+  mov -->|"grava movimentação +<br/>atualiza lote (1 transação)"| modelo
+  mon --> modelo
+  modelo -->|SQL| db

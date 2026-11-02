@@ -68,7 +68,7 @@ def criar(
 @router.post("/funcionarios/{funcionario_id}/desativar", response_model=FuncionarioOut)
 def desativar(
     funcionario_id: int,
-    _: Funcionario = Depends(exige(Perfil.ADMINISTRADOR)),
+    admin: Funcionario = Depends(exige(Perfil.ADMINISTRADOR)),
     s: Session = Depends(get_session),
 ):
-    return servico.desativar_funcionario(s, funcionario_id)
+    return servico.desativar_funcionario(s, funcionario_id, por=admin)

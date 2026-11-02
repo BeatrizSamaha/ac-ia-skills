@@ -40,18 +40,25 @@ def listar_funcionarios(s: Session) -> list[Funcionario]:
     return list(s.scalars(select(Funcionario).order_by(Funcionario.nome)))
 
 
-def desativar_funcionario(s: Session, funcionario_id: int) -> Funcionario:
+def desativar_funcionario(s: Session, funcionario_id: int, por: Funcionario) -> Funcionario:
     f = s.get(Funcionario, funcionario_id)
     if not f:
         raise NaoEncontrado("Funcionário não encontrado.")
+    if f.id == por.id:
+        raise RegraViolada("Você não pode desativar o próprio acesso.")
     f.ativo = False
     s.commit()
     return f
 
 
+_HASH_FICTICIO = bcrypt.hashpw(b"senha-ficticia", bcrypt.gensalt(4)).decode()
+
+
 def autenticar(s: Session, email: str, senha: str, segredo: str, agora: datetime) -> str:
     f = s.scalar(select(Funcionario).where(Funcionario.email == email.strip().lower()))
-    if not f or not f.ativo or not _confere(senha, f.senha_hash):
+    # Confere a senha mesmo se o e-mail não existir, para não revelar e-mails cadastrados pelo tempo.
+    senha_ok = _confere(senha, f.senha_hash if f else _HASH_FICTICIO)
+    if not f or not f.ativo or not senha_ok:
         raise NaoAutorizado("E-mail ou senha inválidos.")
     payload = {"sub": str(f.id), "perfil": f.perfil.value, "exp": int((agora + DURACAO_TOKEN).timestamp())}
     return jwt.encode(payload, segredo, algorithm="HS256")

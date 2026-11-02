@@ -83,3 +83,10 @@ Um sistema web em que cada funcionário entra com seu login e só vê e faz o qu
 
 - Dados são simulados; nada de informação real de paciente.
 - Se houver tempo, comparar `security-and-hardening` (Addy Osmani) no módulo Acesso.
+
+## Revisões após `/code-review` (2026-11-02)
+
+- Alerta de validade passa a listar também lotes **já vencidos** com unidades, para orientar o descarte.
+- Devolução multi-lote **pula** lotes vencidos e devolve aos lotes válidos da mesma retirada (pendente de confirmação da Beatriz; decisão tomada por delegação).
+- Erros de validação de entrada retornam em português.
+- O Administrador não pode desativar o próprio acesso.

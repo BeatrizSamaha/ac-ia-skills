@@ -3,7 +3,7 @@
 body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1d2939; background: #f7f9fc; }
 header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: var(--azul); color: #fff; }
 header h1 { font-size: 1.2rem; margin: 0; }
-#usuario { display: flex; gap: 12px; align-items: center; }
+#sessao { display: flex; gap: 12px; align-items: center; }
 main { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
 .cartao { background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; padding: 16px; margin-bottom: 16px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); align-items: end; }
 .cartao.estreito { max-width: 380px; margin: 60px auto; grid-template-columns: 1fr; }

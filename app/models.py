@@ -50,6 +50,10 @@ class Medicamento(Base):
 
     lotes: Mapped[list["Lote"]] = relationship(back_populates="medicamento")
 
+    @property
+    def descricao(self) -> str:
+        return f"{self.nome} {self.apresentacao}"
+
 
 class Lote(Base):
     __tablename__ = "lotes"

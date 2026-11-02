@@ -31,6 +31,26 @@ def _registra(s: Session, mov: Movimentacao, itens: list[tuple[Lote, int]]) -> M
     return mov
 
 
+def _distribuir(quantidade: int, capacidades: list[tuple[Lote, int]]) -> list[tuple[Lote, int]]:
+    """Reparte `quantidade` entre os lotes, na ordem dada, até a capacidade de cada um."""
+    partes, falta = [], quantidade
+    for lote, capacidade in capacidades:
+        if falta == 0:
+            break
+        usado = min(falta, capacidade)
+        partes.append((lote, usado))
+        falta -= usado
+    return partes
+
+
+def _devolvido_por_lote(s: Session, retirada: Movimentacao) -> dict[int, int]:
+    devolvido: dict[int, int] = {}
+    for dev in s.scalars(select(Movimentacao).where(Movimentacao.retirada_origem_id == retirada.id)):
+        for item in dev.itens:
+            devolvido[item.lote_id] = devolvido.get(item.lote_id, 0) + item.quantidade
+    return devolvido
+
+
 def registrar_entrada(
     s: Session, *, funcionario: Funcionario, agora: datetime, medicamento_id: int,
     codigo_lote: str, validade: date, quantidade: int,
@@ -74,14 +94,7 @@ def registrar_retirada(
             f"Estoque disponível insuficiente: pedido {quantidade}, disponível {disponivel}."
         )
 
-    itens: list[tuple[Lote, int]] = []
-    falta = quantidade
-    for lote in lotes:  # FEFO (ADR 0002)
-        usado = min(falta, lote.quantidade)
-        itens.append((lote, -usado))
-        falta -= usado
-        if falta == 0:
-            break
+    itens = [(lote, -usado) for lote, usado in _distribuir(quantidade, [(l, l.quantidade) for l in lotes])]
 
     mov = Movimentacao(tipo=TipoMovimentacao.RETIRADA, medicamento=medicamento,
                        funcionario=funcionario, data_hora=agora, setor=setor, paciente=paciente)
@@ -105,10 +118,7 @@ def registrar_devolucao(
         raise Proibido("Enfermeiro só pode devolver as próprias retiradas.")
     _quantidade_positiva(quantidade)
 
-    devolvido: dict[int, int] = {}
-    for dev in s.scalars(select(Movimentacao).where(Movimentacao.retirada_origem_id == ret.id)):
-        for item in dev.itens:
-            devolvido[item.lote_id] = devolvido.get(item.lote_id, 0) + item.quantidade
+    devolvido = _devolvido_por_lote(s, ret)
 
     # Devolve primeiro ao último lote consumido (o que vence depois), nunca a lote vencido.
     hoje = agora.date()
@@ -124,14 +134,7 @@ def registrar_devolucao(
             "(descontadas devoluções anteriores e lotes vencidos)."
         )
 
-    itens: list[tuple[Lote, int]] = []
-    falta = quantidade
-    for lote, c in capacidade:
-        usado = min(falta, c)
-        itens.append((lote, usado))
-        falta -= usado
-        if falta == 0:
-            break
+    itens = _distribuir(quantidade, capacidade)
     mov = Movimentacao(tipo=TipoMovimentacao.DEVOLUCAO, medicamento_id=ret.medicamento_id,
                        funcionario=funcionario, data_hora=agora, setor=ret.setor,
                        paciente=ret.paciente, retirada_origem_id=ret.id)
@@ -189,10 +192,6 @@ def retiradas_visiveis(s: Session, funcionario: Funcionario) -> list[tuple[Movim
     resultado = []
     for ret in s.scalars(q.order_by(Movimentacao.data_hora.desc(), Movimentacao.id.desc())):
         retirado = -sum(i.quantidade for i in ret.itens)
-        devolvido = sum(
-            i.quantidade
-            for dev in s.scalars(select(Movimentacao).where(Movimentacao.retirada_origem_id == ret.id))
-            for i in dev.itens
-        )
+        devolvido = sum(_devolvido_por_lote(s, ret).values())
         resultado.append((ret, retirado, retirado - devolvido))
     return resultado

@@ -1,0 +1,79 @@
+classDiagram
+  direction LR
+  class Funcionario {
+    +int id
+    +str nome
+    +str email
+    +str senha_hash
+    +Perfil perfil
+    +bool ativo
+  }
+  class Medicamento {
+    +int id
+    +str nome
+    +str apresentacao
+    +ClasseControle classe
+    +int estoque_minimo
+    +descricao() str
+  }
+  class Lote {
+    +int id
+    +str codigo
+    +date validade
+    +int quantidade
+  }
+  class Movimentacao {
+    +int id
+    +TipoMovimentacao tipo
+    +datetime data_hora
+    +str setor
+    +str paciente
+    +str motivo
+    +int retirada_origem_id
+  }
+  class ItemMovimentacao {
+    +int id
+    +int quantidade  «variação com sinal»
+  }
+  class Perfil {
+    <<enumeration>>
+    ADMINISTRADOR
+    FARMACEUTICO
+    ENFERMEIRO
+  }
+  class ClasseControle {
+    <<enumeration>>
+    COMUM
+    CONTROLADO
+  }
+  class TipoMovimentacao {
+    <<enumeration>>
+    ENTRADA
+    RETIRADA
+    DEVOLUCAO
+    DESCARTE
+    AJUSTE
+  }
+  class ServicoMovimentacoes {
+    <<módulo movimentacoes.servico>>
+    +registrar_entrada()
+    +registrar_retirada()  FEFO
+    +registrar_devolucao()
+    +registrar_descarte()
+    +registrar_ajuste()
+    +retiradas_visiveis()
+    -_distribuir()
+    -_devolvido_por_lote()
+    -_registra()  transação única
+  }
+  Medicamento "1" --> "*" Lote : lotes
+  Movimentacao "*" --> "1" Medicamento
+  Movimentacao "*" --> "1" Funcionario : feita por
+  Movimentacao "1" --> "1..*" ItemMovimentacao : itens
+  ItemMovimentacao "*" --> "1" Lote
+  Movimentacao "0..1" --> "*" Movimentacao : devolução → retirada de origem
+  Funcionario --> Perfil
+  Medicamento --> ClasseControle
+  Movimentacao --> TipoMovimentacao
+  ServicoMovimentacoes ..> Movimentacao : cria (imutável)
+  ServicoMovimentacoes ..> Lote : única escrita de quantidade

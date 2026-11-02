@@ -32,7 +32,9 @@ def relogio():
 
 @pytest.fixture
 def app(relogio):
-    return create_app(database_url="sqlite://", jwt_secret="segredo-de-teste-com-32-bytes-ou-mais!", agora=relogio)
+    app = create_app(database_url="sqlite://", jwt_secret="segredo-de-teste-com-32-bytes-ou-mais!", agora=relogio)
+    yield app
+    app.state.SessionLocal.kw["bind"].dispose()
 
 
 @pytest.fixture

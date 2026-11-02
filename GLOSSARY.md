@@ -64,7 +64,7 @@ Movimentação que tira unidades de um ou mais lotes para um setor.
 _Avoid_: saída, dispensação, baixa
 
 **Devolução**:
-Movimentação que retorna ao mesmo lote unidades de uma retirada anterior.
+Movimentação que retorna unidades de uma retirada anterior aos lotes de onde saíram, começando pelo último consumido e pulando lotes já vencidos.
 _Avoid_: estorno, retorno
 
 **Descarte**:
@@ -74,6 +74,15 @@ _Avoid_: perda, baixa
 **Ajuste**:
 Movimentação que corrige a quantidade de um lote após uma conferência física.
 _Avoid_: edição, correção de lançamento
+
+**Item de movimentação**:
+Parte de uma movimentação que afeta um único lote; uma retirada multi-lote tem vários itens.
+
+**Variação**:
+Efeito de um item de movimentação no lote: positiva aumenta, negativa diminui.
+
+**Quantidade devolvível**:
+Quanto de uma retirada ainda pode ser devolvido: retirado menos o já devolvido.
 
 **Setor**:
 Unidade do hospital destinatária de uma retirada (UTI, Pronto-Socorro, etc.).
@@ -89,7 +98,7 @@ Aviso de que o estoque disponível de um medicamento está abaixo do estoque mí
 _Avoid_: alerta de estoque baixo
 
 **Alerta de validade**:
-Aviso de que um lote com unidades vence em até 30 dias.
+Aviso de que um lote com unidades vence em até 30 dias ou já venceu (e deve ser descartado).
 
 **Trilha de auditoria**:
 Histórico completo de movimentações, consultável por medicamento, lote, funcionário e período.

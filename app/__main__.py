@@ -22,7 +22,7 @@ def main() -> None:
     app = create_app(database_url=os.environ.get("DATABASE_URL", "sqlite:///medicamentos.db"),
                      jwt_secret=_segredo())
     if popular(app.state.SessionLocal, app.state.agora().date()):
-        print(f"Dados de demonstração criados. Senha de todos os usuários demo: {SENHA_DEMO}")
+        print(f"Dados de demonstração criados. Senha de todos os funcionários de demonstração: {SENHA_DEMO}")
     port = int(os.environ.get("PORT", "8000"))
     print(f"Abra http://localhost:{port}  (API: http://localhost:{port}/docs)")
     uvicorn.run(app, host="127.0.0.1", port=port)
