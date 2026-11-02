@@ -7,7 +7,7 @@ Equipe: Beatriz Samaha de Faria Garcia
 Sistema de controle de medicamentos e materiais hospitalares: autenticação por níveis de autorização, gestão de estoque, retiradas/devoluções, validade, alertas de reposição e auditoria de movimentações.
 
 ## Conjunto de skills
-_A definir (Fase 2)._
+Matt Pocock Skills (`.claude/skills/`). Justificativa em `docs/adr/0001-conjunto-de-skills.md`.
 
 ## Estrutura
 ```
