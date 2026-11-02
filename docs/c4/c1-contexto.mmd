@@ -1,0 +1,14 @@
+flowchart TB
+  classDef person fill:#08427b,stroke:#052e56,color:#fff
+  classDef system fill:#1168bd,stroke:#0b4884,color:#fff
+  classDef ext fill:#999,stroke:#6b6b6b,color:#fff
+
+  adm["<b>Administrador</b><br/>[Pessoa]<br/>Gerencia funcionários<br/>e cadastro de medicamentos"]:::person
+  far["<b>Farmacêutico</b><br/>[Pessoa]<br/>Farmácia central: entradas, descartes,<br/>controlados, alertas e relatórios"]:::person
+  enf["<b>Enfermeiro</b><br/>[Pessoa]<br/>Retira e devolve<br/>medicamentos comuns"]:::person
+
+  sys["<b>Sistema de Controle de Medicamentos</b><br/>[Sistema de software]<br/>Controla estoque por lote, retiradas,<br/>devoluções, validade, reposição e auditoria"]:::system
+
+  adm -->|"Cadastra funcionários e medicamentos<br/>[HTTPS]"| sys
+  far -->|"Registra entradas, descartes, retiradas;<br/>consulta alertas e auditoria [HTTPS]"| sys
+  enf -->|"Retira e devolve medicamentos<br/>[HTTPS]"| sys

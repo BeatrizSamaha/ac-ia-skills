@@ -1,0 +1,16 @@
+flowchart TB
+  classDef person fill:#08427b,stroke:#052e56,color:#fff
+  classDef container fill:#438dd5,stroke:#2e6295,color:#fff
+  classDef db fill:#438dd5,stroke:#2e6295,color:#fff
+
+  users["<b>Funcionários</b><br/>[Pessoa]<br/>Administrador, Farmacêutico, Enfermeiro"]:::person
+
+  subgraph S["Sistema de Controle de Medicamentos"]
+    web["<b>Aplicação Web</b><br/>[Container: HTML + JavaScript]<br/>Telas de login, estoque, retirada,<br/>devolução, alertas e auditoria"]:::container
+    api["<b>API</b><br/>[Container: Python 3 + FastAPI]<br/>Regras de negócio, autenticação JWT<br/>e autorização por perfil"]:::container
+    db[("<b>Banco de Dados</b><br/>[Container: SQLite]<br/>Funcionários, medicamentos,<br/>lotes e movimentações")]:::db
+  end
+
+  users -->|"Usa<br/>[HTTPS]"| web
+  web -->|"Chama<br/>[JSON/HTTPS]"| api
+  api -->|"Lê e grava<br/>[SQLAlchemy]"| db
