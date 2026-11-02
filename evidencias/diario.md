@@ -34,7 +34,7 @@ Uma entrada por sessão de trabalho. Alimenta os slides (seções 3, 5, 6, 7 e 8
 - **Impacto no processo:** a skill `grilling` prevê que as decisões são do humano. Sem ele, ela perde a função de reduzir ambiguidade *do humano*. Ainda assim, ela forçou o agente a explicitar 16 decisões e 6 cenários de borda antes do código.
 
 ### 2026-11-02 — `/grill-with-docs` (grilling + domain-modeling)
-- **Resultado:** `GLOSSARY.md` (24 termos), ADRs 0002–0005 e 6 cenários de borda que viraram testes.
+- **Resultado:** `GLOSSARY.md` (22 termos; 25 após o code review), ADRs 0002–0005 e 6 cenários de borda que viraram testes.
 - **Mudou rota?** Sim. A pergunta Q8 (retirada multi-lote) mostrou que "retirar de um lote" bloquearia retiradas comuns, e virou o ADR 0002. A Q13 (correção de erro) levou às movimentações imutáveis (ADR 0003).
 - **Adaptação:** o ADR 0001 foi escrito no formato do nosso template antes de lermos o `ADR-FORMAT.md` da skill, que é mais enxuto. Os ADRs seguintes já usaram o formato da skill.
 
