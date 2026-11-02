@@ -1,0 +1,4 @@
+ImportError while loading conftest '/home/claude/ac-ia-skills/tests/conftest.py'.
+tests/conftest.py:6: in <module>
+    from app.acesso.servico import criar_funcionario
+E   ModuleNotFoundError: No module named 'app.acesso.servico'

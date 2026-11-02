@@ -1,0 +1,2 @@
+FAILED tests/test_06_descarte_ajuste.py::test_so_farmaceutico_descarta_e_ajusta
+5 failed in 6.36s
