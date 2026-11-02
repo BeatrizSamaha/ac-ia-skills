@@ -4,7 +4,7 @@ Disciplina: Métodos e Aplicações de IA — Prof. Pedro Calais (Ibmec BH, 2026
 Equipe: Beatriz Samaha de Faria Garcia
 
 ## Problema
-_A definir (Fase 1)._
+Sistema de controle de medicamentos e materiais hospitalares: autenticação por níveis de autorização, gestão de estoque, retiradas/devoluções, validade, alertas de reposição e auditoria de movimentações.
 
 ## Conjunto de skills
 _A definir (Fase 2)._
