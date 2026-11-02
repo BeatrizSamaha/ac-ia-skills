@@ -62,3 +62,6 @@ Uma entrada por sessão de trabalho. Alimenta os slides (seções 3, 5, 6, 7 e 8
 ### 2026-11-02 — C4 Componentes e Código; `/retro`
 - C4 nível 3 e 4 gerados a partir do código final.
 - A retro (`evidencias/retro.md`) gerou dois guardrails: CI e `scripts/checa_glossario.py`.
+
+### 2026-11-02 — Apresentação: revisão contra o enunciado
+- A Beatriz pediu que o PowerPoint cobrisse cada etapa do PDF com exemplos. O deck passou de 16 para 21 slides: um slide de roteiro ligando cada slide ao item do enunciado, os critérios de complexidade um a um, 4 slides de exemplo com prints reais dos artefatos (grill, spec→ticket, red→green, achado do review→diff) e as 7 perguntas da seção 5 respondidas uma a uma.

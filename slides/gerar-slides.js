@@ -72,6 +72,9 @@ async function icone(Comp, cor = "FFFFFF") {
   function cartao(slide, x, y, w, h, nome, cor = C.background2) {
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, rectRadius: 0.12, fill: { color: cor }, line: { color: cor }, objectName: nome });
   }
+  const etiqueta = (slide, rotulo) => slide.addText(rotulo, { isTextBox: true, margin: 0, x: 9.7, y: 0.08, w: 3.0, h: 0.28, fontSize: 11, bold: true, color: C.accent2, align: "right", objectName: "etiqueta-roteiro" });
+  const P = "/home/claude/build/prints/";
+  function print(slide, f, x, y, w, pw, ph, nome) { slide.addImage({ path: P + f, x, y, w, h: w * ph / pw, objectName: nome, altText: nome }); return y + w * ph / pw; }
   const txt = (slide, text, o) => slide.addText(text, { isTextBox: true, margin: 0, valign: "top", fontSize: 14, color: C.text1, ...o });
 
   // ===== 1. Capa =====
@@ -87,9 +90,31 @@ async function icone(Comp, cor = "FFFFFF") {
   iconeCirculo(s, I.pills, 0.8, 1.0, 0.9, C.accent1, "icone-capa");
   s.addNotes("Abertura. Projeto feito com o conjunto Matt Pocock Skills, com o agente de IA executando o fluxo completo.");
 
+  // ===== Roteiro =====
+  s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Abertura" });
+  s.addText("Roteiro: os itens pedidos no enunciado", { placeholder: "title" });
+  const roteiro = [
+    ["1", "O problema e a aplicação", "3–4"], ["2", "Conjunto de skills: justificativa e princípios", "5–6"],
+    ["3", "Skills usadas e o processo, com prints", "7–11"], ["4", "Modelos C4: antes e depois do código", "12–13"],
+    ["5", "Apontamentos que mudaram a rota", "14"], ["6", "Evidências de qualidade e resultados", "15–17"],
+    ["7", "A skill mais útil (e as 7 perguntas da seção 5)", "18–19"], ["8", "Três aprendizados e o que faríamos diferente", "20"],
+  ];
+  roteiro.forEach(([n, t2, sl], i) => {
+    const x = 0.6 + (i % 2) * 6.15, y = 1.45 + Math.floor(i / 2) * 1.2;
+    cartao(s, x, y, 5.95, 1.0, "roteiro-" + i);
+    s.addShape(pres.shapes.OVAL, { x: x + 0.2, y: y + 0.2, w: 0.6, h: 0.6, fill: { color: C.accent1 }, line: { color: C.accent1 }, objectName: "roteiro-num-" + i });
+    txt(s, n, { x: x + 0.2, y: y + 0.2, w: 0.6, h: 0.6, fontSize: 20, bold: true, color: C.background1, align: "center", valign: "middle" });
+    txt(s, t2, { x: x + 1.0, y: y + 0.15, w: 3.9, h: 0.7, fontSize: 16, bold: true, color: C.text2, valign: "middle" });
+    txt(s, (sl.includes("–") ? "slides " : "slide ") + sl, { x: x + 4.8, y: y + 0.15, w: 1.0, h: 0.7, fontSize: 12, color: C.accent5, align: "right", valign: "middle" });
+  });
+  cartao(s, 0.6, 6.3, 12.1, 0.6, "roteiro-central", C.text2);
+  txt(s, "Fecho (slide 21): resposta à pergunta central, ou seja, como e em que condições as skills mudam o desenvolvimento, e com que evidências", { x: 0.85, y: 6.38, w: 11.6, h: 0.45, fontSize: 14, color: C.background1, valign: "middle" });
+  s.addNotes("Cada slide traz no canto superior direito o item do roteiro do enunciado que ele atende.");
+
   // ===== 2. Problema =====
   pres.addSection({ title: "Problema e skills" });
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Problema e skills" });
+  etiqueta(s, "Roteiro · item 1");
   s.addText("O problema: medicamento sem rastreio é risco ao paciente", { placeholder: "title" });
   txt(s, [
     { text: "Hoje, na farmácia central", options: { bold: true, fontSize: 18, color: C.text2, breakLine: true } },
@@ -116,8 +141,31 @@ async function icone(Comp, cor = "FFFFFF") {
   });
   s.addNotes("Quatro módulos com responsabilidades distintas, banco, regras de negócio não triviais, autenticação e autorização: cobre todos os critérios de complexidade. Escolhido entre três ideias (GlowCheck, FitCheck e este) por não depender de OCR ou visão computacional.");
 
+  // ===== Critérios de complexidade =====
+  s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Problema e skills" });
+  etiqueta(s, "Roteiro · item 1 · seção 3");
+  s.addText("Os critérios de complexidade, um a um", { placeholder: "title" });
+  const criterios = [
+    ["Três ou mais módulos", "4: Acesso, Estoque, Movimentações, Monitoramento"],
+    ["Persistência", "SQLite via SQLAlchemy: 5 tabelas, transação única por movimentação"],
+    ["Regras não triviais e erros", "FEFO multi-lote, validade, limite de devolução, controlados; erros 401/403/404/409/422 em português"],
+    ["API ou interface", "API REST com documentação OpenAPI (/docs) e interface web por perfil"],
+    ["Segurança", "JWT, bcrypt, autorização por perfil, login em tempo constante"],
+    ["Testes automatizados", "71 testes das regras e dos fluxos, pela API"],
+    ["Documentação", "README, glossário, 6 ADRs, spec, 10 tickets e 4 diagramas C4"],
+    ["Ambiguidade de requisitos", "16 decisões tornadas explícitas no /grill-with-docs"],
+  ];
+  criterios.forEach(([c, d], i) => {
+    const x = 0.6 + (i % 2) * 6.15, y = 1.45 + Math.floor(i / 2) * 1.35;
+    cartao(s, x, y, 5.95, 1.18, "criterio-" + i);
+    iconeCirculo(s, I.check, x + 0.2, y + 0.29, 0.6, C.accent6, "icone-criterio-" + i);
+    txt(s, [{ text: c, options: { bold: true, fontSize: 16, color: C.text2, breakLine: true } }, { text: d, options: { fontSize: 13 } }], { x: x + 1.0, y: y + 0.14, w: 4.8, h: 0.95 });
+  });
+  s.addNotes("Os sete critérios do enunciado mais a ambiguidade de requisitos, que o enunciado cita como outra fonte de complexidade.");
+
   // ===== 3. Por que Matt Pocock =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Problema e skills" });
+  etiqueta(s, "Roteiro · item 2");
   s.addText("Por que Matt Pocock Skills", { placeholder: "title" });
   const razoes = [
     [I.comments, "Muita ambiguidade no domínio", "Validade, controlados, devolução, perfis: o grill-with-docs entrevista até resolver e já escreve glossário e ADRs"],
@@ -144,6 +192,7 @@ async function icone(Comp, cor = "FFFFFF") {
 
   // ===== 4. Como funciona =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Problema e skills" });
+  etiqueta(s, "Roteiro · item 2");
   s.addText("Como o conjunto funciona", { placeholder: "title" });
   const etapas = [
     ["Alinhar", "/grill-with-docs", "Glossário + ADRs", I.comments],
@@ -177,6 +226,7 @@ async function icone(Comp, cor = "FFFFFF") {
   // ===== 5. Processo =====
   pres.addSection({ title: "Processo" });
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Processo" });
+  etiqueta(s, "Roteiro · item 3");
   s.addText("O processo que seguimos, skill por skill", { placeholder: "title" });
   const passos = [
     ["setup-matt-pocock-skills", "Tracker local (.scratch/), labels, layout de domínio", "adaptado"],
@@ -201,7 +251,8 @@ async function icone(Comp, cor = "FFFFFF") {
 
   // ===== 6. Interação =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Processo" });
-  s.addText("Interação com a skill: /grill-with-docs", { placeholder: "title" });
+  etiqueta(s, "Roteiro · item 3 · exemplo 1");
+  s.addText("Exemplo 1 · /grill-with-docs: perguntas antes do código", { placeholder: "title" });
   cartao(s, 0.6, 1.45, 6.3, 5.35, "cartao-grill");
   txt(s, [
     { text: "Rodada 1 · pergunta da skill", options: { fontSize: 12, color: C.accent5, breakLine: true } },
@@ -231,9 +282,64 @@ async function icone(Comp, cor = "FFFFFF") {
   txt(s, "GLOSSARY.md · ADR 0002 (estoque por lote, FEFO)", { x: 7.3, y: 5.85, w: 5.4, h: 0.3, fontSize: 12, italic: true, color: C.accent5 });
   s.addNotes("Formato real da skill: perguntas numeradas, cada uma com recomendação, em rodadas. A rodada 2 só existe porque a resposta da Q2 abriu novas perguntas. O registro completo está em evidencias/grill-rodadas.md.");
 
+  // ===== Exemplo 2: spec e tickets =====
+  s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Processo" });
+  etiqueta(s, "Roteiro · item 3 · exemplo 2");
+  s.addText("Exemplo 2 · /to-spec → /to-tickets: da conversa ao ticket", { placeholder: "title" });
+  print(s, "p-spec.png", 0.6, 1.4, 6.2, 2204, 700, "print-spec");
+  txt(s, [{ text: "/to-spec", options: { bold: true, color: C.text2, fontSize: 16, breakLine: true } },
+    { text: "Sintetiza a conversa do grill numa spec sem entrevistar de novo: 36 user stories, decisões de implementação e a seam de teste (a API HTTP)." }],
+    { x: 0.6, y: 3.55, w: 6.2, h: 1.3, fontSize: 14 });
+  print(s, "p-ticket.png", 7.1, 1.4, 5.6, 2204, 838, "print-ticket");
+  txt(s, [{ text: "/to-tickets", options: { bold: true, color: C.text2, fontSize: 16, breakLine: true } },
+    { text: "Quebra a spec em 10 fatias verticais com dependências (\"Blocked by\") e critérios de aceite. O ticket 04 é o coração das regras: FEFO, estoque insuficiente, controlados." }],
+    { x: 7.1, y: 3.75, w: 5.6, h: 1.5, fontSize: 14 });
+  cartao(s, 0.6, 5.45, 12.1, 1.3, "cartao-exemplo2", C.text2);
+  txt(s, [{ text: "Por que importa: ", options: { bold: true, color: C.accent4 } },
+    { text: "cada critério de aceite do ticket virou um teste no slide seguinte. A user story 17 (\"retirada recusada quando o estoque é menor que o pedido\") é o teste test_quantidade_maior_que_o_disponivel_e_recusada_sem_alterar_nada." }],
+    { x: 0.85, y: 5.6, w: 11.6, h: 1.05, fontSize: 14, color: C.background1, valign: "middle" });
+  s.addNotes("Prints reais dos arquivos gerados pelas skills, em .scratch/controle-medicamentos/.");
+
+  // ===== Exemplo 3: TDD =====
+  s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Processo" });
+  etiqueta(s, "Roteiro · item 3 · exemplo 3");
+  s.addText("Exemplo 3 · /tdd: o teste nasce antes do código", { placeholder: "title" });
+  print(s, "p-teste.png", 0.6, 1.4, 6.6, 2204, 746, "print-teste");
+  txt(s, [{ text: "1. Red", options: { bold: true, color: C.accent2, fontSize: 16, breakLine: true } },
+    { text: "O cenário de borda do grill (pedido de 10; lote A tem 4, lote B tem 20) escrito como teste, antes de existir a retirada." }],
+    { x: 0.6, y: 3.8, w: 6.6, h: 1.0, fontSize: 14 });
+  print(s, "p-redgreen.png", 0.6, 4.95, 6.6, 2204, 606, "print-red-green");
+  cartao(s, 7.55, 1.4, 5.15, 5.4, "cartao-tdd");
+  txt(s, [
+    { text: "O que o terminal mostra", options: { bold: true, color: C.text2, fontSize: 17, breakLine: true } },
+    { text: "11 falhas antes do código (red).", options: { bullet: true, breakLine: true } },
+    { text: "Depois da implementação, 1 falha restante: o teste avançava o relógio 31 dias e o login expirava. Era um defeito do teste, não da regra.", options: { bullet: true, breakLine: true } },
+    { text: "Corrigido o teste: 11 passam (green).", options: { bullet: true, breakLine: true } },
+    { text: " ", options: { breakLine: true } },
+    { text: "Ganho de produtividade", options: { bold: true, color: C.text2, fontSize: 17, breakLine: true } },
+    { text: "A suíte levava 77 s. Com bcrypt de 4 rounds só nos testes, passou a levar 4 s, o que viabilizou rodar o ciclo a cada ticket.", options: { bullet: true } },
+  ], { x: 7.8, y: 1.65, w: 4.7, h: 5.0, fontSize: 14, paraSpaceAfter: 6 });
+  s.addNotes("Logs reais em evidencias/logs/tdd-04-red.txt e tdd-04-green.txt. Os 10 tickets têm logs red e green.");
+
+  // ===== Exemplo 4: code review =====
+  s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Processo" });
+  etiqueta(s, "Roteiro · item 3 · exemplo 4");
+  s.addText("Exemplo 4 · /code-review: achado → teste → correção", { placeholder: "title" });
+  print(s, "p-review.png", 0.6, 1.4, 6.0, 2204, 654, "print-review");
+  txt(s, [{ text: "Achado", options: { bold: true, color: C.accent2, fontSize: 16, breakLine: true } },
+    { text: "Um subagente sem o contexto da implementação leu o diff e apontou: o login só roda o bcrypt quando o e-mail existe, então o tempo de resposta revela quem está cadastrado. E o admin podia desativar a si mesmo." }],
+    { x: 0.6, y: 3.3, w: 6.0, h: 1.5, fontSize: 14 });
+  txt(s, [{ text: "Teste primeiro", options: { bold: true, color: C.accent2, fontSize: 16, breakLine: true } },
+    { text: "3 testes novos falhando (red) antes da correção: autodesativação, mensagens em português, segredo JWT obrigatório." }],
+    { x: 0.6, y: 5.0, w: 6.0, h: 1.2, fontSize: 14 });
+  print(s, "p-diff.png", 6.95, 1.4, 5.75, 2204, 1164, "print-diff");
+  txt(s, "Correção real (commit 64f9e58)", { x: 6.95, y: 4.5, w: 5.75, h: 0.3, fontSize: 12, italic: true, color: C.accent5 });
+  s.addNotes("Relatório completo em evidencias/code-review-1.md, com a decisão tomada para cada achado: corrigido, mantido e documentado, ou deixado como trabalho futuro.");
+
   // ===== 7. C4 antes =====
   pres.addSection({ title: "Arquitetura" });
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Arquitetura" });
+  etiqueta(s, "Roteiro · item 4");
   s.addText("C4 antes do código: Contexto e Container", { placeholder: "title" });
   s.addImage({ path: C4 + "c1-contexto.png", x: 0.6, y: 1.35, w: 5.3, h: 5.3 * 534 / 861, objectName: "c4-contexto", altText: "Diagrama C4 de contexto" });
   txt(s, [
@@ -248,6 +354,7 @@ async function icone(Comp, cor = "FFFFFF") {
 
   // ===== 8. C4 depois =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Arquitetura" });
+  etiqueta(s, "Roteiro · item 4");
   s.addText("C4 depois do código: Componentes e Código", { placeholder: "title" });
   s.addImage({ path: C4 + "c3-componentes.png", x: 0.6, y: 1.3, h: 5.6, w: 5.6 * 936 / 1662, objectName: "c4-componentes", altText: "Diagrama C4 de componentes" });
   s.addImage({ path: C4 + "c4-codigo.png", x: 4.5, y: 1.35, w: 8.1, h: 8.1 * 1117 / 1784, objectName: "c4-codigo", altText: "Diagrama de classes (C4 nível código)" });
@@ -256,6 +363,7 @@ async function icone(Comp, cor = "FFFFFF") {
 
   // ===== 9. Mudanças de rota =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Arquitetura" });
+  etiqueta(s, "Roteiro · item 5");
   s.addText("Apontamentos das skills que mudaram a rota", { placeholder: "title" });
   const rotas = [
     ["grill · Q8", "\"Retirar de um lote só\" bloquearia retiradas comuns", "Retirada multi-lote FEFO (ADR 0002)"],
@@ -281,6 +389,7 @@ async function icone(Comp, cor = "FFFFFF") {
   // ===== 10. Qualidade =====
   pres.addSection({ title: "Resultados" });
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Resultados" });
+  etiqueta(s, "Roteiro · item 6");
   s.addText("Evidências de qualidade", { placeholder: "title" });
   const stats = [["71", "testes automatizados"], ["96%", "cobertura do código"], ["10/10", "tickets em red → green"], ["✓", "CI verde no GitHub"]];
   stats.forEach(([n, l], i) => {
@@ -302,6 +411,7 @@ async function icone(Comp, cor = "FFFFFF") {
 
   // ===== 11. Defeitos =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Resultados" });
+  etiqueta(s, "Roteiro · item 6");
   s.addText("Quem achou cada defeito", { placeholder: "title" });
   const H = (t) => ({ text: t, options: { bold: true, color: C.background1, fill: { color: C.text2 } } });
   const defeitos = [
@@ -328,6 +438,7 @@ async function icone(Comp, cor = "FFFFFF") {
 
   // ===== 12. Demo =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Resultados" });
+  etiqueta(s, "Roteiro · item 6");
   s.addText("Demonstração", { placeholder: "title" });
   const demos = [
     ["ui-04-retirada-fefo-multilote.png", "Retirada de 40: o sistema tira 30 do lote que vence antes e 10 do seguinte"],
@@ -352,31 +463,39 @@ async function icone(Comp, cor = "FFFFFF") {
   // ===== 13. Skill mais útil =====
   pres.addSection({ title: "Análise" });
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Análise" });
+  etiqueta(s, "Roteiro · item 7 · seção 5");
   s.addText("A skill mais útil: /code-review", { placeholder: "title" });
-  cartao(s, 0.6, 1.45, 4.3, 5.3, "cartao-trofeu", C.text2);
-  iconeCirculo(s, I.trophy, 2.3, 1.75, 0.9, C.accent2, "icone-trofeu");
+  cartao(s, 0.6, 1.45, 3.6, 5.3, "cartao-trofeu", C.text2);
+  iconeCirculo(s, I.trophy, 1.95, 1.75, 0.9, C.accent2, "icone-trofeu");
   txt(s, [
-    { text: "Mais usada: tdd", options: { fontSize: 15, color: C.background2, breakLine: true } },
+    { text: "Mais usada", options: { fontSize: 13, color: C.background2, breakLine: true } },
+    { text: "/tdd", options: { fontSize: 22, bold: true, color: C.background1, breakLine: true } },
     { text: "10 ciclos red → green", options: { fontSize: 13, italic: true, color: C.accent4, breakLine: true } },
     { text: " ", options: { breakLine: true } },
-    { text: "Mais valiosa: code-review", options: { fontSize: 20, bold: true, color: C.background1, breakLine: true } },
+    { text: "Mais valiosa", options: { fontSize: 13, color: C.background2, breakLine: true } },
+    { text: "/code-review", options: { fontSize: 22, bold: true, color: C.background1, breakLine: true } },
     { text: "8 correções, 3 de segurança, 1 ADR novo", options: { fontSize: 13, italic: true, color: C.accent4 } },
-  ], { x: 0.85, y: 2.95, w: 3.8, h: 3.4, align: "center" });
+  ], { x: 0.8, y: 2.9, w: 3.2, h: 3.6, align: "center" });
   const qs = [
-    ["Fase de maior contribuição", "Revisão, depois que todos os testes já passavam"],
-    ["Melhor que um prompt genérico", "Dois subagentes de contexto limpo: um cobra glossário, ADRs e smells; o outro compara com a spec. \"Revise o código\" não olharia o README nem o glossário"],
-    ["Reduziu", "Defeitos (segurança) e retrabalho: o conflito entre ADRs apareceu antes da entrega"],
-    ["Excessiva ou inadequada", "Muitos smells de baixo valor num projeto acadêmico (nomes curtos, Data Clumps); deixados como trabalho futuro"],
-    ["Feito à mão apesar da skill", "Triagem de quais achados corrigir; verificação visual da interface"],
+    ["Qual foi a mais usada? E a mais valiosa?", "/tdd (todo ticket); /code-review, pelo que mudou no produto"],
+    ["Em que fase contribuiu mais?", "Na revisão, quando os 68 testes já passavam e \"parecia pronto\""],
+    ["O que fez melhor que uma instrução genérica?", "Dois subagentes de contexto limpo, com eixos separados; cobrou glossário e ADRs e leu o README"],
+    ["Reduziu ambiguidade, defeitos, retrabalho?", "Defeitos: 8 corrigidos antes da entrega. Retrabalho: o conflito entre ADRs virou o ADR 0006 cedo"],
+    ["Foi inadequada ou excessiva?", "Smells de baixo valor num projeto acadêmico (nomes curtos, Data Clumps)"],
+    ["O que foi manual apesar dela?", "Decidir quais achados corrigir; a verificação visual da interface"],
+    ["O que precisaria ser adaptado?", "Rodar a cada ticket, não só no fim; incluir checagem visual; ajustar a lista de smells ao porte"],
   ];
-  qs.forEach(([q, a], i) => {
-    const y = 1.45 + i * 1.07;
-    txt(s, [{ text: q, options: { bold: true, color: C.accent1, breakLine: true } }, { text: a }], { x: 5.3, y, w: 7.4, h: 1.0, fontSize: 14 });
+  qs.forEach(([q, a2], i) => {
+    const y = 1.45 + i * 0.76;
+    s.addShape(pres.shapes.OVAL, { x: 4.55, y: y + 0.05, w: 0.4, h: 0.4, fill: { color: C.accent1 }, line: { color: C.accent1 }, objectName: "q-num-" + i });
+    txt(s, String(i + 1), { x: 4.55, y: y + 0.05, w: 0.4, h: 0.4, fontSize: 13, bold: true, color: C.background1, align: "center", valign: "middle" });
+    txt(s, [{ text: q, options: { bold: true, color: C.text2, breakLine: true } }, { text: a2 }], { x: 5.15, y, w: 7.55, h: 0.72, fontSize: 13 });
   });
   s.addNotes("O grill-with-docs foi o segundo mais valioso: moldou o domínio. Mas, sem a usuária respondendo (delegação), ele perdeu parte da função de tirar ambiguidade do humano. O code-review entregou valor independente de quem decidia.");
 
   // ===== 14. Funcionou / não =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Análise" });
+  etiqueta(s, "Roteiro · item 7 · seção 5");
   s.addText("O que funcionou e o que precisou ser adaptado", { placeholder: "title" });
   cartao(s, 0.6, 1.45, 5.95, 5.3, "cartao-funcionou");
   iconeCirculo(s, I.check, 0.85, 1.65, 0.6, C.accent6, "icone-funcionou");
@@ -402,6 +521,7 @@ async function icone(Comp, cor = "FFFFFF") {
 
   // ===== 15. Aprendizados =====
   s = pres.addSlide({ masterName: "CONTEUDO", sectionTitle: "Análise" });
+  etiqueta(s, "Roteiro · item 8");
   s.addText("Três aprendizados e o que faríamos diferente", { placeholder: "title" });
   const aprend = [
     [I.comments, "Skill de alinhamento precisa de humano", "O grill gera valor quando quem conhece o domínio responde. Delegar transforma pergunta em suposição.", "Responder as rodadas do grill nós mesmas, com um farmacêutico do Mário Penna"],
@@ -420,11 +540,11 @@ async function icone(Comp, cor = "FFFFFF") {
 
   // ===== 16. Conclusão =====
   s = pres.addSlide({ masterName: "CAPA", sectionTitle: "Análise" });
-  s.addText("Quando as skills mudam o desenvolvimento", { placeholder: "title" });
+  s.addText("Pergunta central: quando as skills mudam o desenvolvimento", { placeholder: "title" });
   s.addText([
     { text: "Mudam quando transformam etapas implícitas em artefatos verificáveis: glossário, ADRs, spec, tickets, testes e relatórios de revisão.", options: { breakLine: true } },
     { text: " ", options: { breakLine: true } },
-    { text: "Evidência: 6 decisões de rota rastreáveis, 8 defeitos achados antes da entrega (5 pela revisão) e 71 testes com 96% de cobertura.", options: { breakLine: true } },
+    { text: "Evidência: 6 mudanças de rota rastreáveis, 8 defeitos achados antes da entrega (5 pela revisão) e 71 testes com 96% de cobertura.", options: { breakLine: true } },
     { text: " ", options: { breakLine: true } },
     { text: "Condição: um humano decidindo. Sem ele, a skill estrutura o trabalho, mas não reduz a ambiguidade real.", options: { bold: true } },
   ], { placeholder: "body" });
