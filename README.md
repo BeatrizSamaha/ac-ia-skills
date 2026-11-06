@@ -3,7 +3,7 @@
 AC "Engenharia de Software + IA: desenvolvimento orientado por Skills". Disciplina Métodos e Aplicações de IA, Prof. Pedro Calais (Ibmec BH, 2026/02).
 Equipe: Beatriz Samaha de Faria Garcia.
 
-## Apresentacao Projeto : https://www.canva.com/design/DAHZzNPmMIs/lGpSUnbebmht78y_47LleA/edit
+## Apresentacao Projeto : https://canva.link/uyjsfrptjek7i2i
 
 ## Problema
 
