@@ -3,6 +3,8 @@
 AC "Engenharia de Software + IA: desenvolvimento orientado por Skills". Disciplina Métodos e Aplicações de IA, Prof. Pedro Calais (Ibmec BH, 2026/02).
 Equipe: Beatriz Samaha de Faria Garcia.
 
+# APRESENTACAO PROJETO: https://www.canva.com/design/DAHZzNPmMIs/lGpSUnbebmht78y_47LleA/edit
+
 ## Problema
 
 Controlar o armazenamento, a retirada, a devolução e a reposição de medicamentos da farmácia central de um hospital, com:
